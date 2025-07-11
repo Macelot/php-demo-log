@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: seu-app-php
+    runtime: php
+    buildCommand: |
+      composer install
+      mkdir -p database
+      php setup.php
+    startCommand: php -S 0.0.0.0:10000 -t public
+    envVars:
+      - key: APP_ENV
+        value: production
