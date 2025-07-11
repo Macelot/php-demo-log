@@ -3,10 +3,24 @@ services:
     name: seu-app-php
     runtime: php
     buildCommand: |
-      composer install
+      # Cria a estrutura de diretórios
       mkdir -p database
+      mkdir -p public
+      
+      # Instala dependências (se tiver composer.json)
+      if [ -f "composer.json" ]; then
+        composer install --no-interaction --no-dev
+      fi
+      
+      # Configura o banco SQLite
       php setup.php
-    startCommand: php -S 0.0.0.0:10000 -t public
-    envVars:
-      - key: APP_ENV
-        value: production
+      
+      # Configura permissões (importante para SQLite)
+      chmod 755 database
+      chmod 644 database/data.db
+      
+      # Se precisar de migrações adicionais
+      # php migrations.php
+    startCommand: |
+      # Inicia o servidor PHP embutido
+      php -S 0.0.0.0:$PORT -t public
